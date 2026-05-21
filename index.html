@@ -224,7 +224,17 @@
         <div class="bg-slate-900/60 backdrop-blur-md border border-slate-800/80 p-6 rounded-2xl">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-md font-bold text-slate-200">🎯 이 무드 전용 추천곡 리스트</h3>
-            <span class="text-xs text-slate-400">기분 급발진 없는 안전 수록곡</span>
+            
+            <!-- 🔄 새로고침 버튼 탑재 -->
+            <button
+              id="btn-refresh-tracks"
+              class="text-xs text-indigo-400 hover:text-indigo-300 bg-slate-800/40 hover:bg-slate-800 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 border border-slate-700/30 font-medium"
+            >
+              <svg id="svg-refresh-icon" class="w-3.5 h-3.5 fill-current transition-transform duration-500" viewBox="0 0 24 24">
+                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.58 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+              </svg>
+              <span>다른 노래 추천받기</span>
+            </button>
           </div>
 
           <div id="tracks-container" class="space-y-2.5">
@@ -254,7 +264,7 @@
 
   <!-- JavaScript 애플리케이션 로직 -->
   <script>
-    // 음악 데이터베이스 (1단계부터 7단계)
+    // 음악 데이터베이스 (각 감정 단계별 10곡의 추천 리스트 풀 구축)
     const MOOD_DATA = {
       1: {
         title: '새벽 & 우울 (Dark / Deep)',
@@ -269,7 +279,12 @@
           { title: '바람이 분다', artist: '이소라' },
           { title: 'Rainy Night Lofi', artist: 'Lofi Girl' },
           { title: '도망가자 (Run With Me)', artist: '선우정아' },
-          { title: '고양이 (feat.아이유)', artist: '선우정아' }
+          { title: '한숨', artist: '이하이' },
+          { title: '모든 날, 모든 순간', artist: '폴킴' },
+          { title: '기억의 습작', artist: '전람회' },
+          { title: '미안해', artist: '양다일' },
+          { title: '사랑은 늘 도망가', artist: '임영웅' },
+          { title: '끝', artist: '권진아' }
         ]
       },
       2: {
@@ -285,7 +300,12 @@
           { title: 'Don\'t Know Why', artist: 'Norah Jones' },
           { title: '가을 아침', artist: '아이유' },
           { title: '주저하는 연인들을 위해', artist: '잔나비' },
-          { title: '너의 의미', artist: '아이유 (Feat. 김창완)' }
+          { title: '너의 의미', artist: '아이유 (Feat. 김창완)' },
+          { title: '밤편지', artist: '아이유' },
+          { title: '사랑인가 봐', artist: '멜로망스' },
+          { title: '봄날', artist: 'BTS' },
+          { title: 'Beautiful', artist: '크러쉬' },
+          { title: '선물', artist: '멜로망스' }
         ]
       },
       3: {
@@ -301,7 +321,12 @@
           { title: 'Plastic Love', artist: 'Mariya Takeuchi' },
           { title: 'instagram', artist: 'DEAN' },
           { title: 'D (Half Moon)', artist: 'DEAN' },
-          { title: '선으로 (Line)', artist: '적재' }
+          { title: '선으로 (Line)', artist: '적재' },
+          { title: '고양이', artist: '선우정아' },
+          { title: '어떻게 이별까지 사랑하겠어, 널 사랑하는 거지', artist: 'AKMU' },
+          { title: '공드리', artist: '혁오' },
+          { title: '비도 오고 그래서', artist: '헤이즈' },
+          { title: '별 보러 가자', artist: '적재' }
         ]
       },
       4: {
@@ -317,7 +342,12 @@
           { title: 'Paris in the Rain', artist: 'Lauv' },
           { title: '봄 봄 봄', artist: '로이킴' },
           { title: '흔들리는 꽃들 속에서 네 샴푸향이 느껴진거야', artist: '장범준' },
-          { title: 'Off My Face', artist: 'Justin Bieber' }
+          { title: 'Off My Face', artist: 'Justin Bieber' },
+          { title: 'Love Lee', artist: 'AKMU' },
+          { title: '좋은 날', artist: '아이유' },
+          { title: '취중고백', artist: '김민석 (멜로망스)' },
+          { title: '신호등', artist: '이무진' },
+          { title: '폰서트', artist: '10CM' }
         ]
       },
       5: {
@@ -333,7 +363,12 @@
           { title: 'Levitating', artist: 'Dua Lipa' },
           { title: 'Dynamite', artist: 'BTS' },
           { title: '여행', artist: '볼빨간사춘기' },
-          { title: '아틀란티스 소녀', artist: 'BoA' }
+          { title: '아틀란티스 소녀', artist: 'BoA' },
+          { title: '아로하', artist: '조정석' },
+          { title: '고백', artist: '멜로망스' },
+          { title: 'Butter', artist: 'BTS' },
+          { title: '붉은 노을', artist: 'BIGBANG' },
+          { title: 'Speed Up', artist: '카라' }
         ]
       },
       6: {
@@ -349,7 +384,12 @@
           { title: 'The Nights', artist: 'Avicii' },
           { title: 'Next Level', artist: 'aespa' },
           { title: 'UP!', artist: 'Kep1er' },
-          { title: 'Shut Down', artist: 'BLACKPINK' }
+          { title: 'Shut Down', artist: 'BLACKPINK' },
+          { title: 'Attention', artist: 'NewJeans' },
+          { title: 'Love Dive', artist: 'IVE' },
+          { title: 'After LIKE', artist: 'IVE' },
+          { title: '사건의 지평선', artist: '윤하' },
+          { title: 'OMG', artist: 'NewJeans' }
         ]
       },
       7: {
@@ -365,7 +405,12 @@
           { title: 'Hysteria', artist: 'Muse' },
           { title: 'Bang Bang Bang', artist: 'BIGBANG' },
           { title: 'Sugar', artist: 'Maroon 5' },
-          { title: 'Animals', artist: 'Martin Garrix' }
+          { title: 'Animals', artist: 'Martin Garrix' },
+          { title: '미인', artist: '노라조' },
+          { title: '챔피언', artist: '싸이' },
+          { title: '가시', artist: '버즈' },
+          { title: '빨간 맛', artist: 'Red Velvet' },
+          { title: 'Fantastic Baby', artist: 'BIGBANG' }
         ]
       }
     };
@@ -425,6 +470,7 @@
     let isPlaying = false;
     let preferredMusicApp = 'youtube'; // 기본 음악 플랫폼 설정
     let userTaste = { 1: 4, 2: 5, 3: 5, 4: 3, 5: 4, 6: 2, 7: 1 };
+    let displayedTracks = []; // 현재 화면에 뿌려지고 있는 엄선 5곡
 
     // DOM 요소 캐싱
     const presetContainer = document.getElementById('mood-preset-container');
@@ -440,6 +486,7 @@
     const keywordsContainer = document.getElementById('keywords-container');
     const cheatsheetTitle = document.getElementById('cheatsheet-title');
     const btnPlayToggle = document.getElementById('btn-play-toggle');
+    const btnRefreshTracks = document.getElementById('btn-refresh-tracks');
     const svgPlayIcon = document.getElementById('svg-play-icon');
     const pingIndicator = document.getElementById('ping-indicator');
     const dotIndicator = document.getElementById('dot-indicator');
@@ -570,7 +617,7 @@
           showToast(`기본 음악 서비스가 "${app.name}"(으)로 변경되었습니다.`);
           renderMusicAppSelector();
           // 현재 로드된 추천 리스트 버튼 텍스트나 데이터 다시 연동
-          updateCurrentMood(currentMood);
+          updateCurrentMood(currentMood, false); // 새로고침하지 않고 앱 연동만 변경
         };
 
         musicAppContainer.appendChild(btn);
@@ -640,8 +687,16 @@
       }
     }
 
+    // 기분 단계 내에서 임의의 5곡 무작위 추천 셔플링 함수
+    function getShuffledTracks(step) {
+      const fullPool = MOOD_DATA[step].tracks;
+      // Fisher-Yates 셔플 알고리즘으로 완전 무작위 믹스
+      const shuffled = [...fullPool].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 5); // 앞의 5곡만 수급
+    }
+
     // 현재 기분(무드) 상태 변경 및 화면 UI 리프레시
-    function updateCurrentMood(step) {
+    function updateCurrentMood(step, forceShuffle = true) {
       currentMood = step;
       moodSlider.value = step;
 
@@ -676,14 +731,19 @@
       const currentAppName = currentApp.name;
       const currentAppSvg = currentApp.svg;
 
-      // 동적 섹션 타이틀 업데이트 (유튜브 하드코딩 제거 완료)
+      // 동적 섹션 타이틀 업데이트
       cheatsheetTitle.innerHTML = `🔍 다른 노래가 나오지 않게 막아주는 <span class="text-indigo-400 font-bold">${currentAppName}</span> 감성 검색 치트키`;
+
+      // 노래 추천 셔플링 연동 (forceShuffle 플래그 활성화 시 새 노래 랜덤 수급)
+      if (forceShuffle || displayedTracks.length === 0) {
+        displayedTracks = getShuffledTracks(step);
+      }
 
       // 해당 기분에 지정된 수록곡 렌더링
       tracksContainer.innerHTML = '';
-      moodConfig.tracks.forEach((track, idx) => {
+      displayedTracks.forEach((track, idx) => {
         const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-3 rounded-xl bg-slate-950/40 hover:bg-slate-950/70 transition-colors border border-slate-850';
+        item.className = 'flex items-center justify-between p-3 rounded-xl bg-slate-950/40 hover:bg-slate-950/70 transition-colors border border-slate-850 animate-fadeIn';
         item.innerHTML = `
           <div class="flex items-center gap-3">
             <span class="text-slate-500 text-xs font-mono w-4">${(idx+1).toString().padStart(2, '0')}</span>
@@ -745,6 +805,21 @@
         dotIndicator.className = 'relative inline-flex rounded-full h-3 w-3 bg-slate-600';
       }
     }
+
+    // 새로고침 버튼 바인딩 (회전 인터랙션 큐 포함)
+    btnRefreshTracks.onclick = () => {
+      const refreshIcon = document.getElementById('svg-refresh-icon');
+      // 회전 애니메이션 클래스 할당
+      refreshIcon.classList.add('rotate-180', 'scale-90');
+      
+      // 음악 셔플 및 화면 리드로잉 진행
+      updateCurrentMood(currentMood, true);
+      showToast('새로운 추천곡 목록을 불러왔습니다!');
+      
+      setTimeout(() => {
+        refreshIcon.classList.remove('rotate-180', 'scale-90');
+      }, 500);
+    };
 
     // 이벤트 리스너 바인딩
     moodSlider.oninput = (e) => {
