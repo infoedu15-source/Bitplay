@@ -14,7 +14,7 @@
     body {
       font-family: 'Noto Sans KR', sans-serif;
     }
-    /* 슬라이더 커스텀 스타일링 */
+    /* HTML5 Range Slider 커스텀 스타일링 (크로스 브라우저 호환성 강화) */
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -30,23 +30,33 @@
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.15);
     }
+    input[type="range"]::-moz-range-thumb {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 9999px;
+      background: #ffffff;
+      border: 3px solid #6366f1;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+      transition: transform 0.1s ease;
+    }
   </style>
 </head>
 <body class="min-h-screen text-slate-100 p-4 md:p-8 transition-colors duration-500 bg-gradient-to-br from-emerald-950 via-slate-950 to-green-950">
 
-  <!-- 토스트 알림창 -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 border border-slate-700 text-slate-200 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2">
+  <!-- 토스트 알림창 (alert() 브라우저 팝업 우회) -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900/90 backdrop-blur border border-slate-700 text-slate-200 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2">
     <span class="text-indigo-400">⚡</span>
     <span id="toast-message" class="text-sm font-medium"></span>
   </div>
 
   <div class="max-w-5xl mx-auto space-y-8">
     
-    <!-- 상단 타이틀 -->
+    <!-- 상단 타이틀 및 깃허브 배포 정보 -->
     <header class="text-center space-y-2">
       <div class="inline-flex items-center gap-2 bg-slate-900/60 backdrop-blur border border-slate-700/40 px-4 py-1.5 rounded-full text-sm text-indigo-400">
         <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-ping"></span>
-        감성 매칭 이탈 방지 솔루션 (HTML 전용)
+        음악 감성 매칭 시스템
       </div>
       <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
         MusiLine : 오늘의 기분 음악 매칭기
@@ -70,15 +80,15 @@
     <!-- 대시보드 그리드 -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- 왼쪽 컬럼: 평소 취향 분석기 -->
-      <div class="lg:col-span-1 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between h-fit">
+      <!-- 왼쪽 컬럼: 평소 취향 분석기 (사용자 맞춤형 선호 그래프) -->
+      <div class="lg:col-span-1 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between h-fit space-y-6">
         <div>
           <div class="flex items-center gap-2 mb-4">
             <span class="text-xl">📊</span>
             <h2 class="text-lg font-bold text-slate-200">나의 평소 무드 취향 스펙트럼</h2>
           </div>
-          <p class="text-xs text-slate-400 mb-6">
-            각 단계별 선호도 그래프를 조절해 평소 취향을 그려보세요. 선택한 오늘의 기분과 내 평소 취향의 매칭율을 실시간으로 도출합니다.
+          <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+            각 단계별 선호도 그래프를 조절해 평소 취향을 그려보세요. 선택한 오늘의 기분과 내 평소 취향의 매칭율을 실시간으로 계산해 드립니다.
           </p>
 
           <!-- 취향 슬라이더 리스트 -->
@@ -88,7 +98,7 @@
         </div>
 
         <!-- 취향 기반 통계 요약 -->
-        <div class="mt-8 pt-4 border-t border-slate-800/80 text-xs text-slate-400 space-y-1">
+        <div class="pt-4 border-t border-slate-800/85 text-xs text-slate-400 space-y-1.5">
           <div>나의 최애 감성: <span id="fav-mood" class="text-white font-medium">-</span></div>
           <div>나의 소외 감성: <span id="hate-mood" class="text-white font-medium">-</span></div>
         </div>
@@ -102,7 +112,7 @@
           <!-- 배경 글로우 서클 -->
           <div id="glow-circle" class="absolute -right-16 -top-16 w-32 h-32 rounded-full blur-3xl opacity-20 bg-gradient-to-br transition-all duration-500"></div>
 
-          <div class="flex justify-between items-center mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <h3 class="text-sm font-semibold text-slate-400 tracking-wider uppercase">현재 세부 조절 감성 줄</h3>
               <div class="flex items-center gap-2 mt-1">
@@ -111,7 +121,7 @@
               </div>
             </div>
             <!-- 실시간 취향 일치도 -->
-            <div class="text-right">
+            <div class="sm:text-right">
               <div class="text-xs text-slate-400">평소 나의 취향 일치율</div>
               <div id="match-rate" class="text-2xl font-extrabold transition-colors duration-300 text-emerald-400">
                 100%
@@ -119,7 +129,7 @@
             </div>
           </div>
 
-          <!-- 일직선 음악 감성 줄 (Mood Line) -->
+          <!-- 일직선 음악 감성 줄 (Mood Line Slider) -->
           <div class="space-y-6 my-8">
             <div class="relative flex items-center h-8">
               <!-- 스펙트럼 라인 밑바탕 그라데이션 -->
@@ -127,7 +137,7 @@
                 <div class="h-full bg-gradient-to-r from-indigo-500 via-emerald-500 to-rose-500 opacity-80"></div>
               </div>
 
-              <!-- 마커 단계별 점선 표시 -->
+              <!-- 마커 단계별 표시 포인트 -->
               <div class="absolute w-full flex justify-between px-1 pointer-events-none">
                 <div data-marker="1" class="w-3.5 h-3.5 rounded-full border-2 bg-slate-900 border-slate-600 transition-all duration-300"></div>
                 <div data-marker="2" class="w-3.5 h-3.5 rounded-full border-2 bg-slate-900 border-slate-600 transition-all duration-300"></div>
@@ -150,8 +160,8 @@
               />
             </div>
 
-            <!-- 슬라이더 하단 단계별 가이드 -->
-            <div id="slider-labels" class="flex justify-between px-1 text-[11px] font-bold text-slate-400">
+            <!-- 슬라이더 하단 단계별 가이드 라벨 -->
+            <div id="slider-labels" class="flex justify-between px-1 text-[10px] md:text-[11px] font-bold text-slate-400">
               <span data-label="1">1. 어둡고 차분</span>
               <span data-label="2">2. 감성 잔잔</span>
               <span data-label="3">3. 몽환 세련</span>
@@ -190,8 +200,9 @@
             </button>
           </div>
 
-          <div class="bg-slate-950/90 rounded-xl overflow-hidden border border-slate-800">
-            <canvas id="visualizer-canvas" class="w-full block"></canvas>
+          <!-- 반응형 캔버스 컨테이너 -->
+          <div class="bg-slate-950/90 rounded-xl overflow-hidden border border-slate-800 w-full">
+            <canvas id="visualizer-canvas" class="w-full block h-[120px]"></canvas>
           </div>
         </div>
 
@@ -220,7 +231,7 @@
 
     </div>
 
-    <!-- 푸터 및 사용 팁 -->
+    <!-- 푸터 및 깃허브 오픈소스 명시 -->
     <footer class="text-center text-xs text-slate-500 pt-8 border-t border-slate-900">
       <p>© MusiLine. 일상 속 플레이리스트의 급발진과 뚱딴지 같은 감성 이탈을 치료합니다.</p>
     </footer>
@@ -356,12 +367,12 @@
       { label: '스트레스/분노', emoji: '😡', step: 7, sub: '화나는 마음 폭발하는 락/EDM' }
     ];
 
-    // 애플리케이션 상태
+    // 애플리케이션 반응형 상태 데이터
     let currentMood = 4;
     let isPlaying = false;
     let userTaste = { 1: 4, 2: 5, 3: 5, 4: 3, 5: 4, 6: 2, 7: 1 };
 
-    // DOM 요소들
+    // DOM 요소 캐싱
     const presetContainer = document.getElementById('mood-preset-container');
     const tasteSlidersContainer = document.getElementById('taste-sliders');
     const moodSlider = document.getElementById('mood-slider');
@@ -379,7 +390,7 @@
     const favMoodEl = document.getElementById('fav-mood');
     const hateMoodEl = document.getElementById('hate-mood');
 
-    // 토스트 알림 함수
+    // 커스텀 토스트 알림 함수
     function showToast(message) {
       const toast = document.getElementById('toast');
       const toastMessage = document.getElementById('toast-message');
@@ -393,13 +404,13 @@
       }, 3000);
     }
 
-    // 유튜브 검색 링크 도우미
+    // 유튜브 검색창 이동 핸들러
     function searchOnYoutube(keyword) {
       const cleanKeyword = encodeURIComponent(keyword);
       window.open(`https://www.youtube.com/results?search_query=${cleanKeyword}`, '_blank');
     }
 
-    // 클립보드 복사 대체 로직
+    // 텍스트 복사 클립보드 호환 솔루션
     function copyToClipboard(text) {
       const tempTextArea = document.createElement('textarea');
       tempTextArea.value = text;
@@ -409,12 +420,12 @@
         document.execCommand('copy');
         showToast(`"${text}" 키워드를 복사했습니다!`);
       } catch (err) {
-        console.error('복사 실패', err);
+        console.error('클립보드 복사 실패', err);
       }
       document.body.removeChild(tempTextArea);
     }
 
-    // 기분 프리셋 버튼 생성 및 바인딩
+    // 상단 기분 버튼 컴포넌트 렌더링
     function renderPresets() {
       presetContainer.innerHTML = '';
       MOOD_PRESETS.forEach(preset => {
@@ -448,7 +459,7 @@
       });
     }
 
-    // 평소 취향 분석 슬라이더 생성 및 바인딩
+    // 좌측 취향 스펙트럼 슬라이더 리스트 렌더링
     function renderTasteSliders() {
       tasteSlidersContainer.innerHTML = '';
       for (let step = 1; step <= 7; step++) {
@@ -480,7 +491,6 @@
           </div>
         `;
 
-        // 슬라이더 조절 시 상태 업데이트
         const sliderInput = item.querySelector('input');
         sliderInput.oninput = (e) => {
           userTaste[step] = parseInt(e.target.value);
@@ -492,9 +502,8 @@
       }
     }
 
-    // 평소 취향 통계 분석 연산
+    // 취향 분석 수치 도출 연산
     function updateCalculations() {
-      // 최애/소외 무드 찾기
       let maxStep = 1;
       let minStep = 1;
       for (let step = 1; step <= 7; step++) {
@@ -504,7 +513,6 @@
       favMoodEl.textContent = MOOD_DATA[maxStep].title;
       hateMoodEl.textContent = MOOD_DATA[minStep].title;
 
-      // 현재 기분의 취향 일치도 연산
       const rate = Math.round((userTaste[currentMood] / 5) * 100);
       matchRateEl.textContent = `${rate}%`;
       if (rate > 60) {
@@ -514,25 +522,25 @@
       }
     }
 
-    // 화면 무드 및 테마, 내용 업데이트
+    // 현재 기분(무드) 상태 변경 및 화면 UI 리프레시
     function updateCurrentMood(step) {
       currentMood = step;
       moodSlider.value = step;
 
       const moodConfig = MOOD_DATA[step];
 
-      // 배경 그라데이션 전환
+      // 배경 변경
       document.body.className = `min-h-screen text-slate-100 p-4 md:p-8 transition-colors duration-500 bg-gradient-to-br ${moodConfig.bgGradient}`;
       
-      // 글로우 컬러 조정
+      // 장식 서클 변경
       glowCircle.className = `absolute -right-16 -top-16 w-32 h-32 rounded-full blur-3xl opacity-20 bg-gradient-to-br ${moodConfig.color} transition-all duration-500`;
 
-      // 메인 정보 표기
+      // 텍스트 및 기본 정보 업데이트
       currentEmoji.textContent = moodConfig.emoji;
       currentTitle.textContent = moodConfig.title;
       currentDescription.textContent = moodConfig.description;
 
-      // 스펙트럼 마커 액티브화 스타일링
+      // 중앙 슬라이더 마커 핀 활성화 업데이트
       for (let i = 1; i <= 7; i++) {
         const marker = document.querySelector(`[data-marker="${i}"]`);
         const label = document.querySelector(`[data-label="${i}"]`);
@@ -545,7 +553,7 @@
         }
       }
 
-      // 수록 트랙 렌더링
+      // 해당 기분에 지정된 수록곡 렌더링
       tracksContainer.innerHTML = '';
       moodConfig.tracks.forEach((track, idx) => {
         const item = document.createElement('div');
@@ -569,7 +577,7 @@
         tracksContainer.appendChild(item);
       });
 
-      // 키워드 렌더링
+      // 감성 키워드 가이드 및 복사 도구 바인딩
       keywordsContainer.innerHTML = '';
       moodConfig.keywords.forEach(kw => {
         const item = document.createElement('div');
@@ -586,12 +594,11 @@
         keywordsContainer.appendChild(item);
       });
 
-      // 취향 계산 및 프리셋 재선택 활성/비활성 연동
       updateCalculations();
       renderPresets();
     }
 
-    // 이퀄라이저 재생 토글
+    // 이퀄라이저 비주얼 연동 활성화
     function setIsPlaying(playing) {
       isPlaying = playing;
       if (isPlaying) {
@@ -609,7 +616,7 @@
       }
     }
 
-    // 슬라이더 이벤트 수신
+    // 이벤트 리스너 바인딩
     moodSlider.oninput = (e) => {
       updateCurrentMood(parseInt(e.target.value));
       setIsPlaying(true);
@@ -619,12 +626,13 @@
       setIsPlaying(!isPlaying);
     };
 
-    // --- 비주얼라이저 캔버스 애니메이션 로직 ---
+    // --- HTML5 Canvas 비주얼라이저 구현 ---
     const canvas = document.getElementById('visualizer-canvas');
     const ctx = canvas.getContext('2d');
-    let bars = Array.from({ length: 40 }, () => Math.random() * 20);
+    let bars = Array.from({ length: 42 }, () => Math.random() * 20);
     let phase = 0;
 
+    // 반응형 컨테이너 너비 보장
     function resizeCanvas() {
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = 120;
@@ -634,6 +642,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const moodConfig = MOOD_DATA[currentMood];
       
+      // 감성 단계별 애니메이션 속도 및 높이 스펙트럼 조정
       const speed = isPlaying ? (currentMood * 0.04 + 0.02) : 0.005;
       const heightMultiplier = isPlaying ? (currentMood * 9 + 15) : 3;
       phase += speed;
@@ -668,14 +677,14 @@
       requestAnimationFrame(animateVisualizer);
     }
 
-    // 브라우저 초기 구동시 세팅
+    // 도큐먼트 로드 및 이벤트 바인딩 초기화
     window.onload = function() {
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
       
       renderPresets();
       renderTasteSliders();
-      updateCurrentMood(4); // 기본 기분: 4단계
+      updateCurrentMood(4); // Default : 4단계 편안 일상
       
       animateVisualizer();
     }
